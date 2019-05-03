@@ -3,10 +3,11 @@
     {% for player in allhai%}
       {% for data in player %}
         {% if loop.first %}
-          <p>player {{ data }} </p>
+          <p>player {{ data }}</p>
+          <p> {{ player[3] }} </p>
 
         {% elif loop.index == 2 %}
-          {% if player[2] == 1%}
+          {% if player[4] == 1%}
             <form action="/dispose" method="post">
               {% for value in data %}
               <button style="padding: 0; border: none;background: transparent" name="hai" value="{{ loop.index0 }}"><img src="../static/images/images/{{ value["name"] }}.png"></button>

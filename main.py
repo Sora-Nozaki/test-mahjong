@@ -569,23 +569,6 @@ def kanzenToitsu():
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def initialize():
     global hai,players,dora
     hai = []
@@ -599,7 +582,10 @@ def initialize():
             for n in range(4):
                 hai.append(i)
 
-    players = [[1,[],[],[],0],
+    players = [ [1,[],[],8,0],
+                [2,[],[],8,0],
+                [3,[],[],8,0],
+                [4,[],[],8,0]
                ]
     #[user_id,{配牌},{捨て牌},[シャンテン計算用],"ツモ番"]
     dora = [[],[]] #[{表ドラ},{裏ドラ}]
@@ -615,7 +601,7 @@ def main():
 def display(players):
     data = []
     for index,player in enumerate(players):
-        data.append([player[0],[ALL_HAI[hai] for hai in player[1]],player[4]])
+        data.append([player[0],[ALL_HAI[hai] for hai in player[1]],[ALL_HAI[hai] for hai in player[2]],player[3],player[4]])
     return data
 
 def dealer(players,hai):
@@ -627,7 +613,8 @@ def dealer(players,hai):
         player[1].sort()
 
 #テスト用(一人用)-ここから　　testに[0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 2, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 2, 0]を代入するとその状態を表示できる。使用しないときはtest = 0
-    test = [0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 2, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 2, 0]
+         #"1p,2p,3p,4p,5p,6p,7p,8p,9p,1s,2s,3s,4s,5s,6s,7s,8s,9s,1m,2m,3m,4m,5m,6m,7m,8m,9m,東,南,西,北,白,発,中"
+    test = 0
     if test:
         test_tehai = []
         for index,i in enumerate(test):
@@ -659,6 +646,8 @@ def draw(next):
     players[next][4] = 1
     syanten_num = syantenCheck(players[next][1])
     print(syanten_num,"シャンテン")
+    players[next][3] = syanten_num
+    print(players)
     # players[next][2] = Hand.complete(players[next])
 
 def make_dora():
@@ -704,7 +693,7 @@ def dispose():
                 player[4] = 0
                 player[1].sort()
                 order = players.index(player)
-                if order == 0:
+                if order == 3: #3
                     next = 0
                 else:
                     next = order + 1
@@ -717,7 +706,7 @@ def dispose():
 if __name__ == "__main__":
     app.run(debug=True)
 
-        # keys = list(player[1])
+# keys = list(player[1])
         # kkk,kkk_pre,list_s,lll = [],[],[],[[],[],[]]
         # count_s = 0
         #
