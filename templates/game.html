@@ -1,0 +1,25 @@
+{% extends "layout.html"%}
+{% block content %}
+    {% for player in allhai%}
+      {% for data in player %}
+        {% if loop.first %}
+          <p>player {{ data }} </p>
+
+        {% elif loop.index == 2 %}
+          {% if player[2] == 1%}
+            <form action="/dispose" method="post">
+              {% for value in data %}
+              <button style="padding: 0; border: none;background: transparent" name="hai" value="{{ loop.index0 }}"><img src="../static/images/images/{{ value["name"] }}.png"></button>
+              {% endfor %}
+            </form>
+          {% else %}
+            {% for value in data %}
+            <button style="padding: 0; border: none;background: transparent" name="hai" value=""><img src="../static/images/images/{{ value["name"] }}.png"></button>
+            {% endfor %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+      {% if loop.index == 5%}
+      {% endif %}
+    {% endfor %}
+{%endblock%}

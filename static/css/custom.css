@@ -1,0 +1,23 @@
+button {
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+button img {
+  display: block;
+}
+
+button:active,
+button img {
+  position: relative;
+}
+
+button::-moz-focus-inner {
+  padding: 0;
+  border: none;
+}
+
+p {
+  color: blue;
+}
