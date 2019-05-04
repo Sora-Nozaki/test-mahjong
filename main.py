@@ -14,6 +14,7 @@ def syantenCheck(player_tehai):
     global mentsu_p_max,mentsu_s_max,mentsu_m_max
     global tatsu_p_max,tatsu_s_max,tatsu_m_max,tatsu_z_max
     global toitsu_m,toitsu_p,toitsu_s,toitsu_check
+    global ans
 
     tehai = [0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0]
 
@@ -32,6 +33,37 @@ def syantenCheck(player_tehai):
         tehai[13] +=1
     if tehai.pop(22)==1:
         tehai[22] +=1
+
+    ans = ""
+    for index,i in enumerate(tehai):
+        if index < 9:
+            for j in range(i):
+                l = index+1
+                n = str(l)
+                ans += n
+            if index == 8:
+                ans += "p"
+        elif index < 18 and index >= 9:
+            for j in range(i):
+                l = index%9+1
+                n = str(l)
+                ans += n
+            if index == 17:
+                ans += "s"
+        elif index < 27 and index >=18:
+            for j in range(i):
+                l = index%9+1
+                n = str(l)
+                ans += n
+            if index == 26:
+                ans += "m"
+        else:
+            for j in range(i):
+                l = index%9+1
+                n = str(l)
+                ans += n
+            if index == 33:
+                ans += "z"
 
     print("#########")
     print("00","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33")
@@ -56,7 +88,7 @@ def syantenCheck(player_tehai):
             Check_z += tehai[i]
     kanzenToitsu_exist = kanzenToitsu()
 
-#シュンツ→コーツ→ターツ　最後に雀頭の有無でシャンテン計算
+#コーツ→シュンツ→ターツ　最後に雀頭の有無でシャンテン計算
     if Check_p > 0:
         mentsu_p_max=0
         tatsu_p_max=0
@@ -76,6 +108,28 @@ def syantenCheck(player_tehai):
         tatsu_z_max = 0
         tatsu_z_num = Tatsu_z()
         print("zターツ",tatsu_z_num)
+
+#シュンツ→コーツ→ターツ　最後に雀頭の有無でシャンテン計算
+    if kotsu:
+        if Check_p > 0:
+            mentsu_p_max=0
+            tatsu_p_max=0
+            mentsu_tatsu_p_num=MentsuTatsu_p(2,tehai)
+            print("pメンツターツ",mentsu_tatsu_p_num,mentsu_p_max)
+        if Check_s > 0:
+            mentsu_s_max=0
+            tatsu_s_max=0
+            mentsu_tatsu_s_num=MentsuTatsu_s(2,tehai)
+            print("sメンツターツ",mentsu_tatsu_s_num)
+        if Check_m > 0:
+            mentsu_m_max=0
+            tatsu_m_max=0
+            mentsu_tatsu_m_num=MentsuTatsu_m(2,tehai)
+            print("mメンツターツ",mentsu_tatsu_m_num)
+        if Check_z > 0:
+            tatsu_z_max = 0
+            tatsu_z_num = Tatsu_z()
+            print("zターツ",tatsu_z_num)
 
     toitsu_num = toitsu_s + toitsu_p + toitsu_m + tatsu_z_max
     syanten_temp = SyantenCal(toitsu_num,kanzen_kotsu_mentsu_num)
@@ -104,7 +158,7 @@ def Tatsu_z(): #字牌のターツ数のチェック
     tatsu_z_num = 0
     for i in range(27,34):
         if tehai[i] == 2:
-            tehai[i] -= 2
+            #tehai[i] -= 2
             tatsu_z_num += 1
     tatsu_z_max = tatsu_z_num
 
@@ -163,7 +217,9 @@ def MentsuTatsu_p(mode,tehai): #ピンズのメンツ・ターツ数
                     print("ピンズの順子抜き取り",i,j,tehai_cal)
 
         if mode == 2 or mode == 3:
-            mentsu_p += Kotsu_p(0)
+            kotsu_data = Kotsu_p(0,tehai_cal)
+            mentsu_p += kotsu_data[0]
+            tehai_cal = kotsu_data[1]
 
 
         #ピンズターツの抜き取り
@@ -272,7 +328,9 @@ def MentsuTatsu_s(mode,tehai): #ソウズのメンツ・ターツ数
                     print("ソウズの順子抜き取り",i,j,tehai_cal)
 
         if mode == 2 or mode == 3:
-            mentsu_s += Kotsu_s(0)
+            kotsu_data = Kotsu_s(0,tehai_cal)
+            mentsu_s += kotsu_data[0]
+            tehai_cal = kotsu_data[1]
 
 
         #ソウズターツの抜き取り
@@ -366,12 +424,13 @@ def MentsuTatsu_m(mode,tehai): #マンズのメンツ・ターツ数
             mentsu_m += kotsu_data[0]
             tehai_cal = kotsu_data[1]
         for j in range(18,27):
-            while tehai_cal[i+j]>=1 and tehai_cal[i+j+1]>=1 and tehai_cal[i+j+2]>=1 and (i+j)<25:
-                tehai_cal[i+j] -= 1
-                tehai_cal[i+j+1] -= 1
-                tehai_cal[i+j+2] -= 1
-                mentsu_m += 1
-                print("マンズの順子抜き取り",i,j,tehai_cal)
+            if i <= 6: #7以上だとtehai_calの要素数を超えてしまう
+                while tehai_cal[i+j]>=1 and tehai_cal[i+j+1]>=1 and tehai_cal[i+j+2]>=1 and (i+j)<25:
+                    tehai_cal[i+j] -= 1
+                    tehai_cal[i+j+1] -= 1
+                    tehai_cal[i+j+2] -= 1
+                    mentsu_m += 1
+                    print("マンズの順子抜き取り",i,j,tehai_cal)
 
         if i > 3:
             for j in range(18,27):
@@ -383,7 +442,9 @@ def MentsuTatsu_m(mode,tehai): #マンズのメンツ・ターツ数
                     print("マンズの順子抜き取り",i,j,tehai_cal)
 
         if mode == 2 or mode == 3:
-            mentsu_m += Kotsu_m(0)
+            kotsu_data = Kotsu_m(0,tehai_cal)
+            mentsu_m += kotsu_data[0]
+            tehai_cal = kotsu_data[1]
 
 
         #マンズターツの抜き取り
@@ -604,10 +665,10 @@ def initialize():
             for n in range(4):
                 hai.append(i)
 
-    players = [ [1,[],[],8,0]
-                # [2,[],[],8,0],
-                # [3,[],[],8,0],
-                # [4,[],[],8,0]
+    players = [ [1,[],[],8,0],
+                [2,[],[],8,0],
+                [3,[],[],8,0],
+                [4,[],[],8,0]
                ]
     #[user_id,{配牌},{捨て牌},[シャンテン計算用],"ツモ番"]
     dora = [[],[]] #[{表ドラ},{裏ドラ}]
@@ -636,7 +697,7 @@ def dealer(players,hai):
 
 #テスト用(一人用)-ここから　　testに[0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 2, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 2, 0]を代入するとその状態を表示できる。使用しないときはtest = 0
          #"1p,2p,3p,4p,5p,6p,7p,8p,9p,1s,2s,3s,4s,5s,6s,7s,8s,9s,1m,2m,3m,4m,5m,6m,7m,8m,9m,東,南,西,北,白,発,中"
-    test = [0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 2, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]
+    test = 0
     if test:
         test_tehai = []
         for index,i in enumerate(test):
@@ -664,13 +725,14 @@ def dealer(players,hai):
         draw(0)
 
 def draw(next):
+    global ans
     number = hai.pop()
     players[next][1].append(number)
     players[next][4] = 1
     syanten_num = syantenCheck(players[next][1])
     print(syanten_num,"シャンテン")
     players[next][3] = syanten_num
-    print(players)
+    print(ans)
     # players[next][2] = Hand.complete(players[next])
 
 def make_dora():
@@ -716,7 +778,7 @@ def dispose():
                 player[4] = 0
                 player[1].sort()
                 order = players.index(player)
-                if order == 0: #3
+                if order == 3: #3
                     next = 0
                 else:
                     next = order + 1
